@@ -84,12 +84,15 @@ while True:
         stopLoss = (round_up(largest['avgAsk'], decimals=3) + 0.1)
         profit = ((bidPrice - takeProfit)/bidPrice)*200  # Calculates percentage profit
         loss = ((stopLoss - bidPrice)/bidPrice)*200  # Calculates percentage loss
-        if loss > profit: risk = False
+        if loss < profit:  # Potential profits is more than or equal to potential loss
+            risk = False
         if float(priceRn) < float(largest['avgAsk']) and (risk is not True):
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
             priceRn = makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "B", "granularity": 'M15', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['ask']['c']
             takeProfit = takeProfitCalculator(dataSet, largest2['time'])
+            if ((bidPrice - takeProfit)/bidPrice)*200 > 4:  # Maximising take profit to be 4%
+                takeProfit = bidPrice-((4/2000)*bidPrice)
             message = 'Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(round_up(float(largest['avgAsk']), decimals=3) + 0.1) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']])
             requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
             orderPlaced[marketOrder(assetName, size, "sell", largest2['avgAsk'], takeProfit, largest['avgAsk'])] = largest['time']
