@@ -84,7 +84,7 @@ while True:
         timeRn = time.time() + 300
         while time.time() < timeRn:
             pass
-        message = "A divergence has been found. Check the graph if it could have been a successful trade 🙏"
+        message = "A divergence has been found. Check the graph if it could have been a successful trade 🙏" + '\n' + assetName
         requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
         # Calculating the risk-to-reward
         risk = True
@@ -104,7 +104,7 @@ while True:
             if ((bidPrice - takeProfit)/bidPrice)*200 > 4:  # Maximising take profit to be 4%
                 takeProfit = bidPrice-((max_profit_percentage/2000)*bidPrice)
                 takeProfit = (round_up(takeProfit, decimals=len(str(priceRn).split('.')[1])))
-            message = 'Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(round_up(float(largest['avgAsk']), decimals=3) + 0.1) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']])
+            message = 'Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(round_up(float(largest['avgAsk']), decimals=3) + 0.1) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']]) + '\n' + assetName
             requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
             orderPlaced[marketOrder(assetName, size, "sell", takeProfit, stopLoss)] = largest['time']
             orders[largest['time']] = ('sell', largest2['avgAsk'], takeProfit, largest['avgAsk'], [largest['time'], largest2['time']], [largest['rsi'], largest2['rsi']], [largest['avgAsk'], largest2['avgAsk']])
