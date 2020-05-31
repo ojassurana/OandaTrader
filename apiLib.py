@@ -122,8 +122,6 @@ def takeProfitCalculator(dataSet, largest2Time):
 def marketOrder(assetName, units, order, takeProfit, stopLoss):
     if order == 'buy': pass
     else: units = -units
-    price = round(price, 5)
-    stopLoss = (round_up(stopLoss, decimals=3)+0.1)
     body = '{"order": {"stopLossOnFill": {"price": "'+str(round(stopLoss,5))+'"},"takeProfitOnFill": {"price": "'+str(round(takeProfit, 5))+'"},"timeInForce": "FOK","instrument": "'+assetName+'","units": "'+str(units*20)+'","type": "MARKET","positionFill": "DEFAULT"}}'
     response = makeRequest('POST', base_url + '/orders', '', {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, body)
     print(response)
