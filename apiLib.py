@@ -4,8 +4,11 @@ from operator import itemgetter
 import os
 # Definitions:
 global assetName
-assetName = 'AUD_JPY'  # TODO: Update once changing currency pair
-base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'  # TODO: Update once using real account
+
+# TODO: Tweak the following variables
+assetName = 'AUD_JPY'
+base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
+
 def getCredentials():  # Gets the authorization credentials
     global assetName
     global apiKey
@@ -88,7 +91,8 @@ def getData(assetTraded):
 def noUnits():
     response = makeRequest('GET', base_url, '', {'Content-Type': 'application/json', 'Authorization': apiKey}, '')
     percent5Acct = float(response['account']["balance"]) #/20
-    url = "https://api-fxpractice.oanda.com/v3/accounts/"+accountID+"/instruments/AUD_SGD/candles?price=A&granularity=M15&count=1"
+    initial_currency = assetName.split("_")[0] + "_SGD"
+    url = "https://api-fxpractice.oanda.com/v3/accounts/"+accountID+"/instruments/"+initial_currency+"/candles?price=A&granularity=M15&count=1"
     payload = {}
     headers = {
         'Authorization': apiKey,
