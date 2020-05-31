@@ -95,7 +95,7 @@ while True:
                 takeProfit = bidPrice-((4/2000)*bidPrice)
             message = 'Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(round_up(float(largest['avgAsk']), decimals=3) + 0.1) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']])
             requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
-            orderPlaced[marketOrder(assetName, size, "sell", largest2['avgAsk'], takeProfit, largest['avgAsk'])] = largest['time']
+            orderPlaced[marketOrder(assetName, size, "sell", takeProfit, stopLoss)] = largest['time']
             orders[largest['time']] = ('sell', largest2['avgAsk'], takeProfit, largest['avgAsk'], [largest['time'], largest2['time']], [largest['rsi'], largest2['rsi']], [largest['avgAsk'], largest2['avgAsk']])
             # orders format: {time: 'sell', sellingPrice, takeProfit, stopLoss,[Highest,2ndHighest]}
             file = open('data.txt', 'a')

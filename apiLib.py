@@ -119,7 +119,7 @@ def takeProfitCalculator(dataSet, largest2Time):
 
 # INPUT: assetName(e.g.EUR_USD), units(e.g.3), order(e.g.Buy), price(price at which order is places), takeProfit, stopLoss
 # OUTPUT: (Response of OANDA)
-def marketOrder(assetName, units, order, price, takeProfit, stopLoss):
+def marketOrder(assetName, units, order, takeProfit, stopLoss):
     if order == 'buy': pass
     else: units = -units
     price = round(price, 5)
