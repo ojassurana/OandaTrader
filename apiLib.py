@@ -8,6 +8,7 @@ global assetName
 # TODO: Tweak the following variables
 assetName = 'AUD_JPY'
 base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
+candle_time_frame = 3600  # Number of seconds per candle
 
 def getCredentials():  # Gets the authorization credentials
     global assetName
@@ -64,7 +65,7 @@ def getRsi(response):
 # OUTPUT: {UNIX, averageAsk, averageBid, RSIValue}
 # Note: Intended to run every 5 Minutes
 def getData(assetTraded):
-    response = makeRequest('GET', base_url + '/instruments/' + assetTraded + '/candles', {"price": "A", "granularity": 'M15', "count": '500'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles']
+    response = makeRequest('GET', base_url + '/instruments/' + assetTraded + '/candles', {"price": "A", "granularity": 'H1', "count": '500'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles']  # TODO: Manually change the candle granuality
     rsiResponse = getRsi(response[:-1])
     responseAsk = response[-3:-1]
     priceData = dict()
@@ -92,7 +93,7 @@ def noUnits():
     response = makeRequest('GET', base_url, '', {'Content-Type': 'application/json', 'Authorization': apiKey}, '')
     percent5Acct = float(response['account']["balance"]) #/20
     initial_currency = assetName.split("_")[0] + "_SGD"
-    url = "https://api-fxpractice.oanda.com/v3/accounts/"+accountID+"/instruments/"+initial_currency+"/candles?price=A&granularity=M15&count=1"
+    url = "https://api-fxpractice.oanda.com/v3/accounts/"+accountID+"/instruments/"+initial_currency+"/candles?price=A&granularity=H1&count=1"
     payload = {}
     headers = {
         'Authorization': apiKey,
@@ -124,8 +125,10 @@ def takeProfitCalculator(dataSet, largest2Time):
 # INPUT: assetName(e.g.EUR_USD), units(e.g.3), order(e.g.Buy), price(price at which order is places), takeProfit, stopLoss
 # OUTPUT: (Response of OANDA)
 def marketOrder(assetName, units, order, takeProfit, stopLoss):
-    if order == 'buy': pass
-    else: units = -units
+    if order == 'buy':
+        pass
+    else:
+        units = -units
     body = '{"order": {"stopLossOnFill": {"price": "'+str(round(stopLoss,5))+'"},"takeProfitOnFill": {"price": "'+str(round(takeProfit, 5))+'"},"timeInForce": "FOK","instrument": "'+assetName+'","units": "'+str(units*20)+'","type": "MARKET","positionFill": "DEFAULT"}}'
     response = makeRequest('POST', base_url + '/orders', '', {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, body)
     print(response)

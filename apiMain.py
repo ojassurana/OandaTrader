@@ -15,14 +15,16 @@ orderPlaced = {}
 # TODO: Tweak the following variables
 assetName = 'AUD_JPY'
 max_loss_percentage = 3
-max_profit_percentage = 4
+max_profit_percentage = 9
 min_rsi_difference = 1
 minimum_candle_difference = 3
 maximum_candle_difference = 18
+candle_time_frame = 3600  # Number of seconds per candle
 
 while True:  # Code to start exact at time 0 mins, 5 seconds
-    if time.gmtime()[5] == 5 and time.gmtime()[4] % 15 == 0: break
-    print('Starting... Will start at exact 15 mins interval')
+    if time.gmtime()[5] == 5 and time.gmtime()[4] == 0:  # TODO: Tweak this based on candle time frame used
+        break
+    print('Starting... Will start at exact 1 Hour interval')
 
 while True:
     data_to_add = getData(assetName)
@@ -45,7 +47,7 @@ while True:
         box = [largest]  # Programmed in descending order in terms of time
         if sorted(dataSet, key=itemgetter('avgAsk'))[-1] == largest:
             largest2 = sorted(dataSet, key=itemgetter('avgAsk'))[-2]
-            if float(largest['time']) - float(largest2['time']) < minimum_candle_difference*15*60:
+            if float(largest['time']) - float(largest2['time']) < minimum_candle_difference*candle_time_frame:
                 largest2 = sorted(dataSet, key=itemgetter('avgAsk'))[-3]
             if (largest2['rsi'] - min_rsi_difference) >= largest['rsi']:
                 divergenceFound = True
@@ -81,37 +83,33 @@ while True:
     else:
         pass
     if divergenceFound:
-        timeRn = time.time() + 300
+        timeRn = time.time() + (candle_time_frame/4)
         while time.time() < timeRn:
             pass
         message = "A divergence has been found. Check the graph if it could have been a successful trade 🙏" + '\n' + assetName + '\n' + str([largest['time'], largest2['time']])
         requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
         # Calculating the risk-to-reward
         risk = True
-        bidPrice = float(makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "B", "granularity": 'M15', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['bid']['c'])
-        priceRn = float(makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "A", "granularity": 'M15', "count": '1'},{'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['ask']['c'])
+        bidPrice = float(makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "B", "granularity": 'H1', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['bid']['c'])  # TODO: Manually change granuality
+        priceRn = float(makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "A", "granularity": 'H1', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['ask']['c'])   # TODO: Manually change granuality
         takeProfit = takeProfitCalculator(dataSet, largest2['time'])
         stopLoss = bidPrice/(1-(max_loss_percentage/2000))
         stopLoss = (round_up(stopLoss, decimals=len(str(bidPrice).split('.')[1])))
-        profit = ((bidPrice - takeProfit)/bidPrice)*200  # Calculates percentage profit
-        loss = ((stopLoss - bidPrice)/bidPrice)*200  # Calculates percentage loss
+        profit = ((bidPrice - takeProfit)/bidPrice)*2000  # Calculates percentage profit
+        loss = ((stopLoss - bidPrice)/bidPrice)*2000  # Calculates percentage loss
         if loss < profit:  # Potential profits is more than or equal to potential loss
             risk = False
         if float(priceRn) < float(largest['avgAsk']) and (risk is not True):
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
             takeProfit = takeProfitCalculator(dataSet, largest2['time'])
-            if ((bidPrice - takeProfit)/bidPrice)*200 > max_profit_percentage:  # Maximising take profit to be 4%
+            if ((bidPrice - takeProfit)/bidPrice)*2000 > max_profit_percentage:  # Maximising take profit to be 4%
                 takeProfit = bidPrice-((max_profit_percentage/2000)*bidPrice)
                 takeProfit = (round_up(takeProfit, decimals=len(str(priceRn).split('.')[1])))
             message = 'Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(stopLoss) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']]) + '\n' + assetName
             requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
             orderPlaced[marketOrder(assetName, size, "sell", takeProfit, stopLoss)] = largest['time']
             orders[largest['time']] = ('sell', largest2['avgAsk'], takeProfit, largest['avgAsk'], [largest['time'], largest2['time']], [largest['rsi'], largest2['rsi']], [largest['avgAsk'], largest2['avgAsk']])
-            # orders format: {time: 'sell', sellingPrice, takeProfit, stopLoss,[Highest,2ndHighest]}
-            file = open('data.txt', 'a')
-            file.write('\n' + str((largest['time'], largest2['avgAsk'], takeProfit, str(round_up(float(largest2['avgAsk']), decimals=3) + 0.04), "Timing of largest and second largest: " + str([largest['time'], largest2['time']]), "Timing of largest and second largest rsi: " + str([largest['rsi'], largest2['rsi']]), "Price of largest and 2nd largest: " + str([largest['avgAsk'], largest2['avgAsk']]))))
-            file.close()
     # Close after 20 candles
     if len(dataSet) > maximum_candle_difference:
         del (dataSet[0])
@@ -127,5 +125,5 @@ while True:
     #     del orderPlaced[ID]
     # ____________________________________________________________________________________
     while True:  # Code to start exact at time 0 minutes, 5 seconds
-        if time.gmtime()[5] == 5 and time.gmtime()[4] % 15 == 0:
+        if time.gmtime()[5] == 5 and time.gmtime()[4] == 0:  # TODO: Tweak this based on candle time frame used
             break
