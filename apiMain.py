@@ -88,9 +88,9 @@ while True:
         requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
         # Calculating the risk-to-reward
         risk = True
+        bidPrice = float(makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "B", "granularity": 'M15', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['bid']['c'])
+        priceRn = float(makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "A", "granularity": 'M15', "count": '1'},{'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['ask']['c'])
         takeProfit = takeProfitCalculator(dataSet, largest2['time'])
-        bidPrice = makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "B", "granularity": 'M15', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['bid']['c']
-        priceRn = makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "A", "granularity": 'M15', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['ask']['c']
         stopLoss = bidPrice/(1-(max_loss_percentage/2000))
         stopLoss = (round_up(stopLoss, decimals=len(str(bidPrice).split('.')[1])))
         profit = ((bidPrice - takeProfit)/bidPrice)*200  # Calculates percentage profit
