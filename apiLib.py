@@ -37,8 +37,16 @@ def round_up(n, decimals=0):
 
 def getRsi(response):
     priceLst = []
-    for i in response:
-        priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
+    count = 0
+    for i in response[:-1]:
+        if float(response[count+1]['time']) - float(i['time']) == 3600:
+            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
+        else:
+            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
+            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(response[count+1]['ask']['o']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
+        count += 1
+    priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(response[-1]['ask']['c']),
+                     'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
     count = 0
     for price in priceLst[1:]:
         if price['price'] >= priceLst[count]['price']:
