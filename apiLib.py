@@ -15,8 +15,8 @@ def getCredentials():  # Gets the authorization credentials
     global accountID
     global base_url
     global assetName
-    apiKey = os.environ.get('oandaKey')
-    accountID = os.environ.get('accountID')
+    apiKey = "Bearer ad174c9a7e2a1b4d35455f8aab75a610-a8bd15642f369090c15a8c3ebbdc81fa"
+    accountID = "101-003-14186888-001"
     base_url = base_url + accountID
     return apiKey, accountID, base_url, assetName
 
