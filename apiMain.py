@@ -84,7 +84,7 @@ while True:
         timeRn = time.time() + 300
         while time.time() < timeRn:
             pass
-        message = "A divergence has been found. Check the graph if it could have been a successful trade 🙏" + '\n' + assetName
+        message = "A divergence has been found. Check the graph if it could have been a successful trade 🙏" + '\n' + assetName + '\n' + str([largest['time'], largest2['time']])
         requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
         # Calculating the risk-to-reward
         risk = True
