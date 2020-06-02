@@ -83,10 +83,12 @@ def getData(assetTraded):
         priceData['avgAsk'] = float(responseAsk[0]['ask']['c'])  # With the purpose of finding the highest of a red candle
         priceData['lowest'] = float(responseAsk[1]['ask']['c'])  # With the purpose of finding the lowest of a red candle
         priceData['colour'] = 'red'
+        colour = "red"
     elif float(responseAsk[1]['ask']['o']) <= float(responseAsk[1]['ask']['c']):
         priceData['avgAsk'] = float(responseAsk[1]['ask']['c'])  # With the purpose of finding the highest of a green candle
         priceData['lowest'] = float(responseAsk[0]['ask']['c'])  # With purpose of finding the lowest of a green candle
         priceData['colour'] = 'green'
+        colour = "green"
     if colour == 'green':  # if green
         priceData['rsi'] = rsiResponse
     elif colour == 'red' and (float(responseAsk[0]['ask']['o']) <= float(responseAsk[0]['ask']['c'])):  # if red and previous one is green
