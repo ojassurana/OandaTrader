@@ -134,7 +134,7 @@ def takeProfitCalculator(dataSet, largest2Time):
 
 # INPUT: assetName(e.g.EUR_USD), units(e.g.3), order(e.g.Buy), price(price at which order is places), takeProfit, stopLoss
 # OUTPUT: (Response of OANDA)
-def marketOrder(assetName, units, order, takeProfit, stopLoss):
+def marketOrder(assetName, units, order, takeProfit, stopLoss, gradient_down, gradient_up):
     if order == 'buy':
         pass
     else:
@@ -143,6 +143,8 @@ def marketOrder(assetName, units, order, takeProfit, stopLoss):
     response = makeRequest('POST', base_url + '/orders', '', {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, body)
     print(response)
     console = open('console.txt', 'a')
+    console.write('\n' + "Gradient Down: "+str(gradient_down))
+    console.write('\n' + "Gradient Up: " + str(gradient_up))
     console.write('\n'+str(response))
     console.close()
     if "orderCreateTransaction" not in response:
