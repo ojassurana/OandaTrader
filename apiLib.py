@@ -129,7 +129,7 @@ def takeProfitCalculator(dataSet, largest2Time):
             break
         count += 1
     sortedList = sorted(listData, key=itemgetter('lowest'))
-    return (sortedList[0])['lowest']
+    return (sortedList[0])['lowest'], (sortedList[0])['time']
 
 
 # INPUT: assetName(e.g.EUR_USD), units(e.g.3), order(e.g.Buy), price(price at which order is places), takeProfit, stopLoss
