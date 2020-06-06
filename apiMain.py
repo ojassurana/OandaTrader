@@ -17,7 +17,7 @@ assetName = 'AUD_JPY'
 max_loss_percentage = 3
 max_profit_percentage = 9
 min_rsi_difference = 1
-minimum_candle_difference = 3
+minimum_candle_difference = 4
 maximum_candle_difference = 18
 candle_time_frame = 3600  # Number of seconds per candle
 
@@ -92,7 +92,7 @@ while True:
         risk = True
         bidPrice = float(makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "B", "granularity": 'H1', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['bid']['c'])  # TODO: Manually change granuality
         priceRn = float(makeRequest('GET', base_url + '/instruments/' + assetName + '/candles', {"price": "A", "granularity": 'H1', "count": '1'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles'][0]['ask']['c'])   # TODO: Manually change granuality
-        takeProfit = takeProfitCalculator(dataSet, largest2['time'])
+        takeProfit, takeProfitTime = takeProfitCalculator(dataSet, largest2['time'])
         stopLoss = bidPrice/(1-(max_loss_percentage/2000))
         stopLoss = (round_up(stopLoss, decimals=len(str(bidPrice).split('.')[1])))
         profit = ((bidPrice - takeProfit)/bidPrice)*2000  # Calculates percentage profit
@@ -102,11 +102,13 @@ while True:
         if float(priceRn) < float(largest['avgAsk']) and (risk is not True):
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
-            takeProfit = takeProfitCalculator(dataSet, largest2['time'])
+            takeProfit, takeProfitTime = takeProfitCalculator(dataSet, largest2['time'])
             if ((bidPrice - takeProfit)/bidPrice)*2000 > max_profit_percentage:  # Maximising take profit to be 4%
                 takeProfit = bidPrice-((max_profit_percentage/2000)*bidPrice)
                 takeProfit = (round_up(takeProfit, decimals=len(str(priceRn).split('.')[1])))
-            message = 'Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(stopLoss) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']]) + '\n' + assetName
+            gradient_down = (float(takeProfit)-float(largest2['avgAsk']))/(float(takeProfitTime)-float(largest2['time']))  # gradient_down refers to the gradient between largest2 and takeProfit
+            gradient_up = (float(largest['avgAsk'])-float(takeProfit))/(float(largest['time'])-float(takeProfitTime))  # gradient_up refers to the gradient between takeProfit and largest
+            message = 'Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(stopLoss) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']]) + '\n' + assetName + '\n' + str(gradient_down) + '\n' + str(gradient_up)
             requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
             orderPlaced[marketOrder(assetName, size, "sell", takeProfit, stopLoss, gradient_down, gradient_up)] = largest['time']
             orders[largest['time']] = ('sell', largest2['avgAsk'], takeProfit, largest['avgAsk'], [largest['time'], largest2['time']], [largest['rsi'], largest2['rsi']], [largest['avgAsk'], largest2['avgAsk']])
