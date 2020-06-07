@@ -17,9 +17,10 @@ assetName = 'AUD_JPY'
 max_loss_percentage = 3
 max_profit_percentage = 9
 min_rsi_difference = 1
-minimum_candle_difference = 4
+minimum_candle_difference = 5
 maximum_candle_difference = 18
 candle_time_frame = 3600  # Number of seconds per candle
+minimum_profit = 6  # Minimum profit required to execute
 
 while True:  # Code to start exact at time 0 mins, 5 seconds
     if time.gmtime()[5] == 5 and time.gmtime()[4] == 0:  # TODO: Tweak this based on candle time frame used
@@ -99,11 +100,11 @@ while True:
         loss = ((stopLoss - bidPrice)/bidPrice)*2000  # Calculates percentage loss
         if loss < profit:  # Potential profits is more than or equal to potential loss
             risk = False
-        if float(priceRn) < float(largest['avgAsk']) and (risk is not True):
+        if float(priceRn) < float(largest['avgAsk']) and (risk is not True) and profit >= minimum_profit:
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
             takeProfit, takeProfitTime = takeProfitCalculator(dataSet, largest2['time'])
-            if ((bidPrice - takeProfit)/bidPrice)*2000 > max_profit_percentage:  # Maximising take profit to be 4%
+            if ((bidPrice - takeProfit)/bidPrice)*2000 > max_profit_percentage:  # Maximising take profit to be 9%
                 takeProfit = bidPrice-((max_profit_percentage/2000)*bidPrice)
                 takeProfit = (round_up(takeProfit, decimals=len(str(priceRn).split('.')[1])))
             gradient_down = (((float(takeProfit)-float(largest2['avgAsk']))/float(largest2['avgAsk']))*100)/(float(takeProfitTime)-float(largest2['time']))  # gradient_down refers to the gradient between largest2 and takeProfit
