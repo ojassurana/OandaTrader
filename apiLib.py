@@ -1,7 +1,7 @@
 import requests
 import math
 from operator import itemgetter
-import os
+import time
 # Definitions:
 global assetName
 
@@ -9,6 +9,7 @@ global assetName
 assetName = 'AUD_JPY'
 base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
 candle_time_frame = 3600  # Number of seconds per candle
+timetowait = 900  # Number of seconds to wait before execution
 
 def getCredentials():  # Gets the authorization credentials
     global assetName
@@ -134,12 +135,12 @@ def takeProfitCalculator(dataSet, largest2Time):
 
 # INPUT: assetName(e.g.EUR_USD), units(e.g.3), order(e.g.Buy), price(price at which order is places), takeProfit, stopLoss
 # OUTPUT: (Response of OANDA)
-def marketOrder(assetName, units, order, takeProfit, stopLoss, gradient_down, gradient_up):
+def marketOrder(assetName, units, order, price, takeProfit, stopLoss, gradient_down, gradient_up):
     if order == 'buy':
         pass
     else:
         units = -units
-    body = '{"order": {"stopLossOnFill": {"price": "'+str(round(stopLoss,5))+'"},"takeProfitOnFill": {"price": "'+str(round(takeProfit, 5))+'"},"timeInForce": "FOK","instrument": "'+assetName+'","units": "'+str(units*20)+'","type": "MARKET","positionFill": "DEFAULT"}}'
+    body = '{"order": {"stopLossOnFill": {"price": "'+str(round(stopLoss, 5))+'"},"takeProfitOnFill": {"price": "'+str(round(takeProfit, 5))+'"},"timeInForce": "GTD","instrument": "'+assetName+'","units": "'+str(units*20)+'","type": "MARKET_IF_TOUCHED","positionFill": "DEFAULT","price": "'+str(price)+'","gtdTime": "'+str(int(time.time()+timetowait))+'"}}'
     response = makeRequest('POST', base_url + '/orders', '', {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, body)
     print(response)
     console = open('console.txt', 'a')
