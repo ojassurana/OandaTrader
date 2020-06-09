@@ -40,7 +40,7 @@ def getRsi(response):
     priceLst = []
     count = 0
     for i in response[:-1]:
-        if float(response[count+1]['time']) - float(i['time']) == 3600:
+        if float(response[count+1]['time']) - float(i['time']) == candle_time_frame:
             priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
         else:
             priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
