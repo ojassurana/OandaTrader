@@ -153,3 +153,10 @@ def marketOrder(assetName, units, order, price, takeProfit, stopLoss, gradient_d
     else:
         response = int(response["orderCreateTransaction"]["id"])
         return response
+
+#  RSI Test cases
+# getCredentials()
+# print(getData('EUR_USD'))
+# print(getData('AUD_HKD'))
+# print(getData('GBP_USD'))
+# print(getData('NZD_JPY'))
