@@ -2,6 +2,7 @@ import requests
 import math
 from operator import itemgetter
 import time
+
 # Definitions:
 global assetName
 
@@ -10,6 +11,7 @@ assetName = 'AUD_JPY'
 base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
 candle_time_frame = 3600  # Number of seconds per candle
 timetowait = 900  # Number of seconds to wait before execution
+
 
 def getCredentials():  # Gets the authorization credentials
     global assetName
@@ -22,13 +24,20 @@ def getCredentials():  # Gets the authorization credentials
     base_url = base_url + accountID
     return apiKey, accountID, base_url, assetName
 
+
 def makeRequest(types, url, Params, Headers, Body):
-    url = url+"?"
-    for parameter in Params:
-        url += parameter + "=" + Params[parameter] + "&"
-    Headers['Content-Type'] = 'application/json'
-    response = requests.request(types, url, headers=Headers, data=Body)
-    return response.json()
+    while True:
+        try:
+            url = url + "?"
+            for parameter in Params:
+                url += parameter + "=" + Params[parameter] + "&"
+            Headers['Content-Type'] = 'application/json'
+            response = requests.request(types, url, headers=Headers, data=Body)
+            return response.json()
+        except:
+            continue
+        else:
+            break
 
 
 def round_up(n, decimals=0):
@@ -40,32 +49,38 @@ def getRsi(response):
     priceLst = []
     count = 0
     for i in response[:-1]:
-        if float(response[count+1]['time']) - float(i['time']) == candle_time_frame:
-            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
+        if float(response[count + 1]['time']) - float(i['time']) == candle_time_frame:
+            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']),
+                             'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
         else:
-            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
-            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(response[count+1]['ask']['o']), 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
+            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']),
+                             'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
+            priceLst.append(
+                {'upward movement': 0, 'downward movement': 0, 'price': float(response[count + 1]['ask']['o']),
+                 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
         count += 1
     priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(response[-1]['ask']['c']),
                      'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
     count = 0
     for price in priceLst[1:]:
         if price['price'] >= priceLst[count]['price']:
-            priceLst[count+1]['upward movement'] += price['price'] - priceLst[count]['price']
+            priceLst[count + 1]['upward movement'] += price['price'] - priceLst[count]['price']
         else:
-            priceLst[count+1]['downward movement'] += priceLst[count]['price'] - price['price']
+            priceLst[count + 1]['downward movement'] += priceLst[count]['price'] - price['price']
         count += 1
     first_avg_upward, first_avg_downward = 0, 0
     for i in priceLst[0:10]:
         first_avg_upward += i['upward movement']
         first_avg_downward += i['downward movement']
     del priceLst[:10]
-    priceLst[0]['average upward movement'] = first_avg_upward/10
-    priceLst[0]['average downward movement'] = first_avg_downward/10
+    priceLst[0]['average upward movement'] = first_avg_upward / 10
+    priceLst[0]['average downward movement'] = first_avg_downward / 10
     count = 0
     for price in priceLst[1:]:
-        price['average upward movement'] = ((priceLst[count]['average upward movement']*9)+price['upward movement'])/10
-        price['average downward movement'] = ((priceLst[count]['average downward movement'] * 9) + price['downward movement']) / 10
+        price['average upward movement'] = ((priceLst[count]['average upward movement'] * 9) + price[
+            'upward movement']) / 10
+        price['average downward movement'] = ((priceLst[count]['average downward movement'] * 9) + price[
+            'downward movement']) / 10
         count += 1
     return 100 - 100 / (1 + (priceLst[-1]['average upward movement'] / priceLst[-1]['average downward movement']))
 
@@ -74,25 +89,32 @@ def getRsi(response):
 # OUTPUT: {UNIX, averageAsk, averageBid, RSIValue}
 # Note: Intended to run every 5 Minutes
 def getData(assetTraded):
-    response = makeRequest('GET', base_url + '/instruments/' + assetTraded + '/candles', {"price": "A", "granularity": 'H1', "count": '500'}, {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")['candles']  # TODO: Manually change the candle granuality
+    response = makeRequest('GET', base_url + '/instruments/' + assetTraded + '/candles',
+                           {"price": "A", "granularity": 'H1', "count": '500'},
+                           {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")[
+        'candles']  # TODO: Manually change the candle granuality
     rsiResponse = getRsi(response[:-1])
     responseAsk = response[-3:-1]
     priceData = dict()
     priceData['time'] = responseAsk[1]['time']
     colour = ""
     if float(responseAsk[1]['ask']['o']) > float(responseAsk[1]['ask']['c']):
-        priceData['avgAsk'] = float(responseAsk[0]['ask']['c'])  # With the purpose of finding the highest of a red candle
-        priceData['lowest'] = float(responseAsk[1]['ask']['c'])  # With the purpose of finding the lowest of a red candle
+        priceData['avgAsk'] = float(
+            responseAsk[0]['ask']['c'])  # With the purpose of finding the highest of a red candle
+        priceData['lowest'] = float(
+            responseAsk[1]['ask']['c'])  # With the purpose of finding the lowest of a red candle
         priceData['colour'] = 'red'
         colour = "red"
     elif float(responseAsk[1]['ask']['o']) <= float(responseAsk[1]['ask']['c']):
-        priceData['avgAsk'] = float(responseAsk[1]['ask']['c'])  # With the purpose of finding the highest of a green candle
+        priceData['avgAsk'] = float(
+            responseAsk[1]['ask']['c'])  # With the purpose of finding the highest of a green candle
         priceData['lowest'] = float(responseAsk[0]['ask']['c'])  # With purpose of finding the lowest of a green candle
         priceData['colour'] = 'green'
         colour = "green"
     if colour == 'green':  # if green
         priceData['rsi'] = rsiResponse
-    elif colour == 'red' and (float(responseAsk[0]['ask']['o']) <= float(responseAsk[0]['ask']['c'])):  # if red and previous one is green
+    elif colour == 'red' and (
+            float(responseAsk[0]['ask']['o']) <= float(responseAsk[0]['ask']['c'])):  # if red and previous one is green
         priceData['rsi'] = getRsi(response[:-2])
     else:  # if previous is red and current is red
         priceData['rsi'] = rsiResponse
@@ -102,9 +124,9 @@ def getData(assetTraded):
 #  OUTPUT: (Number of units to trade)
 def noUnits():
     response = makeRequest('GET', base_url, '', {'Content-Type': 'application/json', 'Authorization': apiKey}, '')
-    percent5Acct = float(response['account']["balance"]) #/20
+    percent5Acct = float(response['account']["balance"])  # /20
     initial_currency = assetName.split("_")[0] + "_SGD"
-    url = "https://api-fxpractice.oanda.com/v3/accounts/"+accountID+"/instruments/"+initial_currency+"/candles?price=A&granularity=H1&count=1"
+    url = "https://api-fxpractice.oanda.com/v3/accounts/" + accountID + "/instruments/" + initial_currency + "/candles?price=A&granularity=H1&count=1"
     payload = {}
     headers = {
         'Authorization': apiKey,
@@ -112,11 +134,12 @@ def noUnits():
     }
     rate = requests.request("GET", url, headers=headers, data=payload).json()
     rate = rate["candles"][0]["ask"]["o"]
-    return math.ceil(percent5Acct/float(rate))
+    return math.ceil(percent5Acct / float(rate))
 
 
 # INPUT: ID of order to close
-def closeOrder(ID): return makeRequest("PUT", base_url+"/trades/"+str(ID)+"/close", {}, {"Authorization": apiKey}, "")
+def closeOrder(ID): return makeRequest("PUT", base_url + "/trades/" + str(ID) + "/close", {}, {"Authorization": apiKey},
+                                       "")
 
 
 # Aim: Calculates the take profit value in a divergence
@@ -140,13 +163,18 @@ def marketOrder(assetName, units, order, price, takeProfit, stopLoss, gradient_d
         pass
     else:
         units = -units
-    body = '{"order": {"stopLossOnFill": {"price": "'+str(round(stopLoss, 5))+'"},"takeProfitOnFill": {"price": "'+str(round(takeProfit, 5))+'"},"timeInForce": "GTD","instrument": "'+assetName+'","units": "'+str(units*20)+'","type": "MARKET_IF_TOUCHED","positionFill": "DEFAULT","price": "'+str(price)+'","gtdTime": "'+str(int(time.time()+timetowait))+'"}}'
-    response = makeRequest('POST', base_url + '/orders', '', {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, body)
+    body = '{"order": {"stopLossOnFill": {"price": "' + str(
+        round(stopLoss, 5)) + '"},"takeProfitOnFill": {"price": "' + str(
+        round(takeProfit, 5)) + '"},"timeInForce": "GTD","instrument": "' + assetName + '","units": "' + str(
+        units * 20) + '","type": "MARKET_IF_TOUCHED","positionFill": "DEFAULT","price": "' + str(
+        price) + '","gtdTime": "' + str(int(time.time() + timetowait)) + '"}}'
+    response = makeRequest('POST', base_url + '/orders', '',
+                           {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, body)
     print(response)
     console = open('console.txt', 'a')
-    console.write('\n' + "Gradient Down: "+str(gradient_down))
+    console.write('\n' + "Gradient Down: " + str(gradient_down))
     console.write('\n' + "Gradient Up: " + str(gradient_up))
-    console.write('\n'+str(response))
+    console.write('\n' + str(response))
     console.close()
     if "orderCreateTransaction" not in response:
         return 0
