@@ -93,6 +93,10 @@ def getData(assetTraded):
                            {"price": "A", "granularity": 'H1', "count": '500'},
                            {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")[
         'candles']  # TODO: Manually change the candle granuality
+    # count = 1
+    # for i in response[1:]:
+    #     i['ask']['o'] = response[count-1]['ask']['o']
+    #     count += 1
     rsiResponse = getRsi(response[:-1])
     responseAsk = response[-3:-1]
     priceData = dict()
@@ -181,3 +185,6 @@ def marketOrder(assetName, units, order, price, takeProfit, stopLoss, gradient_d
     else:
         response = int(response["orderCreateTransaction"]["id"])
         return response
+
+getCredentials()
+print(getData('EUR_GBP'))
