@@ -185,6 +185,3 @@ def marketOrder(assetName, units, order, price, takeProfit, stopLoss, gradient_d
     else:
         response = int(response["orderCreateTransaction"]["id"])
         return response
-
-getCredentials()
-print(getData('EUR_GBP'))
