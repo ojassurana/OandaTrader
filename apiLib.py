@@ -89,10 +89,12 @@ def getRsi(response):
 # OUTPUT: {UNIX, averageAsk, averageBid, RSIValue}
 # Note: Intended to run every 5 Minutes
 def getData(assetTraded):
-    response = makeRequest('GET', base_url + '/instruments/' + assetTraded + '/candles',
-                           {"price": "A", "granularity": 'H1', "count": '500'},
-                           {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")[
-        'candles']  # TODO: Manually change the candle granuality
+    response = {}
+    while 'candles' not in response:
+        response = makeRequest('GET', base_url + '/instruments/' + assetTraded + '/candles',
+                               {"price": "A", "granularity": 'H1', "count": '500'},
+                               {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")
+    response = response['candles']  # TODO: Manually change the candle granuality
     # count = 1
     # for i in response[1:]:
     #     i['ask']['o'] = response[count-1]['ask']['o']
