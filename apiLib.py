@@ -1,4 +1,3 @@
-# test
 import requests
 import math
 from operator import itemgetter
