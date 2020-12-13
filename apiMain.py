@@ -87,7 +87,8 @@ while True:
         timeRn = time.time() + (candle_time_frame/4)
         while time.time() < timeRn:
             pass
-        message = "A divergence has been found. Check the graph if it could have been a successful trade 🙏" + '\n' + assetName + '\n' + str([largest['time'], largest2['time']])
+        reasons_why = "Reasons why:" + '\n'
+        message = "A divergence has been found. Check the graph if it could have been a successful trade 🙏" + '\n' + assetName + '\n' + str([largest['time'], largest2['time']]) + '\n' + str([largest['rsi'], largest2['rsi']])
         requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
         # Calculating the risk-to-reward
         risk = True
@@ -100,6 +101,11 @@ while True:
         loss = ((stopLoss - bidPrice)/bidPrice)*2000  # Calculates percentage loss
         if loss < profit:  # Potential profits is more than or equal to potential loss
             risk = False
+        if float(priceRn) >= float(largest['avgAsk']):
+            reasons_why = reasons_why + '15 Mins' + '\n'
+        if profit < minimum_profit:
+            reasons_why = reasons_why + 'Potential profit lesser than 6%'
+        requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + reasons_why)
         if float(priceRn) < float(largest['avgAsk']) and (risk is not True) and profit >= minimum_profit:
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
