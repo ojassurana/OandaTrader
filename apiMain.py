@@ -102,7 +102,8 @@ while True:
         if loss < profit:  # Potential profits is more than or equal to potential loss
             risk = False
         if float(priceRn) >= float(largest['avgAsk']):
-            reasons_why = reasons_why + '15 Mins' + '\n'
+            #  reasons_why = reasons_why + '15 Mins' + '\n'
+            risk = False
         if profit < minimum_profit:
             reasons_why = reasons_why + 'Potential profit lesser than 6%'
         requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + reasons_why)
