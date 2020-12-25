@@ -84,9 +84,10 @@ while True:
     else:
         pass
     if divergenceFound:
-        timeRn = time.time() + (candle_time_frame/4)
-        while time.time() < timeRn:
-            pass
+        # This was for the 15 mins thing: _______________
+        # timeRn = time.time() + (candle_time_frame/4)
+        # while time.time() < timeRn:
+        #     pass
         reasons_why = "Reasons why:" + '\n'
         message = "A divergence has been found. Check the graph if it could have been a successful trade 🙏" + '\n' + assetName + '\n' + str([largest['time'], largest2['time']]) + '\n' + str([largest['rsi'], largest2['rsi']])
         requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message)
