@@ -2,6 +2,7 @@ import requests
 import math
 from operator import itemgetter
 import time
+from RSI import *
 
 # Definitions:
 global assetName
@@ -95,11 +96,8 @@ def getData(assetTraded):
                                {"price": "A", "granularity": 'H1', "count": '500'},
                                {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, "{}")
     response = response['candles']  # TODO: Manually change the candle granuality
-    # count = 1
-    # for i in response[1:]:
-    #     i['ask']['o'] = response[count-1]['ask']['o']
-    #     count += 1
-    rsiResponse = getRsi(response[:-1])
+    response = openclossolver(response)
+    rsiResponse = rsisol(response[:-1])[-1]
     responseAsk = response[-3:-1]
     priceData = dict()
     priceData['time'] = responseAsk[1]['time']
@@ -121,7 +119,7 @@ def getData(assetTraded):
         priceData['rsi'] = rsiResponse
     elif colour == 'red' and (
             float(responseAsk[0]['ask']['o']) <= float(responseAsk[0]['ask']['c'])):  # if red and previous one is green
-        priceData['rsi'] = getRsi(response[:-2])
+        priceData['rsi'] = rsisol(response[:-2])[-1]
     else:  # if previous is red and current is red
         priceData['rsi'] = rsiResponse
     return priceData
@@ -187,3 +185,20 @@ def marketOrder(assetName, units, order, price, takeProfit, stopLoss, gradient_d
     else:
         response = int(response["orderCreateTransaction"]["id"])
         return response
+
+
+def openclossolver(response):
+    index = 1
+    for candle in response[1:]:
+        response[index]['ask']['o'] = response[index-1]['ask']['c']
+        index += 1
+    return response
+
+def rsisol(response):
+    lst = []
+    for i in response:
+        lst.append(float(i['ask']['c']))
+    return rsi(np.array(lst))
+
+
+apiKey, accountID, base_url, assetName = getCredentials()
