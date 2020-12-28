@@ -3,13 +3,12 @@ import math
 from operator import itemgetter
 import time
 from RSI import *
+import os
 
 # Definitions:
 global assetName
 
 # TODO: Tweak the following variables
-assetName = 'AUD_JPY'
-base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
 candle_time_frame = 3600  # Number of seconds per candle
 timetowait = 900  # Number of seconds to wait before execution
 
@@ -20,8 +19,10 @@ def getCredentials():  # Gets the authorization credentials
     global accountID
     global base_url
     global assetName
-    apiKey = "Bearer ad174c9a7e2a1b4d35455f8aab75a610-a8bd15642f369090c15a8c3ebbdc81fa"
-    accountID = "101-003-14186888-001"
+    assetName = next(open('pair.txt'))
+    base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
+    apiKey = os.environ['apiKey']
+    accountID = os.environ['accountID']
     base_url = base_url + accountID
     return apiKey, accountID, base_url, assetName
 

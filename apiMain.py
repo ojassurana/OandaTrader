@@ -13,7 +13,6 @@ dataSet = [{'time': 0, 'avgBid': 0, 'avgAsk': 0, 'rsi': 0, 'colour': 'red'}, {'t
 orderPlaced = {}
 
 # TODO: Tweak the following variables
-assetName = 'AUD_JPY'
 max_loss_percentage = 3
 max_profit_percentage = 9
 min_rsi_difference = 0
