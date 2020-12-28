@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from apiLib import *
 import time
 from operator import itemgetter
