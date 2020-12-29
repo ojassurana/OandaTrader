@@ -1,0 +1,2 @@
+
+[{'time': 0, 'avgBid': 0, 'avgAsk': 0, 'rsi': 0, 'colour': 'red'}, {'time': 0, 'avgBid': 0, 'avgAsk': 0, 'rsi': 0, 'colour': 'red'}, {'time': '1609250400.000000000', 'avgAsk': 5.90176, 'lowest': 5.89844, 'colour': 'red', 'rsi': 68.57168982252004}]

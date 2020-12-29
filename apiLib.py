@@ -21,7 +21,7 @@ def getCredentials():  # Gets the authorization credentials
     global accountID
     global base_url
     global assetName
-    assetName = next(open('pair.txt'))
+    assetName = next(open('pairs.txt'))
     base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
     apiKey = os.environ['apiKey']
     accountID = os.environ['accountID']
@@ -178,11 +178,11 @@ def marketOrder(assetName, units, order, price, takeProfit, stopLoss, gradient_d
     response = makeRequest('POST', base_url + '/orders', '',
                            {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, body)
     print(response)
-    console = open('console.txt', 'a')
-    console.write('\n' + "Gradient Down: " + str(gradient_down))
-    console.write('\n' + "Gradient Up: " + str(gradient_up))
-    console.write('\n' + str(response))
-    console.close()
+    #  console = open('console.txt', 'a')
+    #  console.write('\n' + "Gradient Down: " + str(gradient_down))
+    #  console.write('\n' + "Gradient Up: " + str(gradient_up))
+    #  console.write('\n' + str(response))
+    #  console.close()
     if "orderCreateTransaction" not in response:
         return 0
     else:
