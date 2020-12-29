@@ -21,10 +21,10 @@ def getCredentials():  # Gets the authorization credentials
     global accountID
     global base_url
     global assetName
-    assetName = next(open('pairs.txt'))
+    assetName = next(open('forex.txt'))
     base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
-    apiKey = os.environ['apiKey']
-    accountID = os.environ['accountID']
+    apiKey = os.environ['apiKey'].strip()
+    accountID = os.environ['accountID'].strip()
     base_url = base_url + accountID
     return apiKey, accountID, base_url, assetName
 
@@ -94,6 +94,7 @@ def getRsi(response):
 # Note: Intended to run every 5 Minutes
 def getData(assetTraded):
     response = {}
+    assetTraded = assetTraded.strip()
     while 'candles' not in response:
         response = makeRequest('GET', base_url + '/instruments/' + assetTraded + '/candles',
                                {"price": "A", "granularity": 'H1', "count": '500'},
