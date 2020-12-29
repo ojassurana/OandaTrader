@@ -38,9 +38,9 @@ while True:
         isRed = False
     dataSet.append(data_to_add)  # Adds latest data set on the bottom
     print(dataSet)
-    console = open('console.txt', 'a')
-    console.write('\n' + str(dataSet))
-    console.close()
+    #  console = open('console.txt', 'a')
+    #  console.write('\n' + str(dataSet))
+    #  console.close()
     divergenceFound = False
     count = 1
     largest = dataSet[-1]  # Latest block
@@ -54,9 +54,9 @@ while True:
             if (largest2['rsi'] - min_rsi_difference) >= largest['rsi']:
                 divergenceFound = True
                 print('Found falling RSI: ', largest['rsi'], ',', largest2['rsi'])
-                console = open('console.txt', 'a')
-                console.write('\n' + 'Found falling RSI: ' + str(largest['rsi']) + ', ' + str(largest2['rsi']))
-                console.close()
+                #  console = open('console.txt', 'a')
+                #  console.write('\n' + 'Found falling RSI: ' + str(largest['rsi']) + ', ' + str(largest2['rsi']))
+                #  console.close()
                 leave = True
         if not leave:
             for candle in dataSet[::-1][1:]:
@@ -77,9 +77,9 @@ while True:
                         if (largest2['rsi'] - min_rsi_difference) >= largest['rsi']:
                             divergenceFound = True
                             print('Found falling RSI: ', largest['rsi'], ',', largest2['rsi'])
-                            console = open('console.txt', 'a')
-                            console.write('\n' + 'Found falling RSI: ' + str(largest['rsi']) + ', ' + str(largest2['rsi']))
-                            console.close()
+                            #  console = open('console.txt', 'a')
+                            #  console.write('\n' + 'Found falling RSI: ' + str(largest['rsi']) + ', ' + str(largest2['rsi']))
+                            #  console.close()
                             break
                 count += 1
     else:
