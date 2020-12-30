@@ -112,7 +112,7 @@ while True:
         if largest['rsi'] < 70 or largest2['rsi'] < 70:
             reasons_why = reasons_why + '\n' + 'One of the RSI might be lesser than 70'
         requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + reasons_why)
-        if float(priceRn) < float(largest['avgAsk']) and (risk is not True) and profit >= minimum_profit:
+        if float(priceRn) < float(largest['avgAsk']) and (risk is not True) and profit >= minimum_profit and largest['rsi'] > 70 and largest2['rsi'] > 70:
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
             takeProfit, takeProfitTime = takeProfitCalculator(dataSet, largest2['time'])
