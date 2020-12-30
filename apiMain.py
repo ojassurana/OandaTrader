@@ -23,10 +23,11 @@ maximum_candle_difference = 18
 candle_time_frame = 3600  # Number of seconds per candle
 minimum_profit = 6  # Minimum profit required to execute
 
+print('Currency pair:', assetName)
+print('Starting... Will start at exact 1 Hour interval')
 while True:  # Code to start exact at time 0 mins, 5 seconds
     if time.gmtime()[5] == 5 and time.gmtime()[4] == 0:  # TODO: Tweak this based on candle time frame used
         break
-    print('Starting... Will start at exact 1 Hour interval')
 
 while True:
     data_to_add = getData(assetName)
