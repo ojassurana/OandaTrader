@@ -16,7 +16,7 @@ orderPlaced = {}
 
 # TODO: Tweak the following variables
 max_loss_percentage = 3
-max_profit_percentage = 9
+max_profit_percentage = 100  # Because we remove 9% max profit
 min_rsi_difference = 0
 minimum_candle_difference = 5
 maximum_candle_difference = 18
