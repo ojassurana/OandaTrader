@@ -94,7 +94,7 @@ while True:
         takeProfit, takeProfitTime = takeProfitCalculator(dataSet, largest2['time'])
         stopLoss = bidPrice/(1-(max_loss_percentage/2000))
         stopLoss = (round_up(stopLoss, decimals=len(str(bidPrice).split('.')[1])))
-        profit = ((bidPrice - takeProfit)/bidPrice)*2000  # Calculates percentage profit
+        profit = ((bidPrice - takeProfit)/takeProfit)*2000  # Calculates percentage profit
         loss = ((stopLoss - bidPrice)/bidPrice)*2000  # Calculates percentage loss
         if largest['rsi'] < 70 or largest2['rsi'] < 70:
             reasons_why = reasons_why + 'RSI < 70' + '\n'
