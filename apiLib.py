@@ -12,7 +12,7 @@ global assetName
 
 # TODO: Tweak the following variables
 candle_time_frame = 3600  # Number of seconds per candle
-timetowait = 900  # Number of seconds to wait before execution
+timetowait = 3600  # Number of seconds to wait before execution
 
 
 def getCredentials():  # Gets the authorization credentials
