@@ -49,45 +49,6 @@ def round_up(n, decimals=0):
     return math.ceil(n * multiplier) / multiplier
 
 
-def getRsi(response):
-    priceLst = []
-    count = 0
-    for i in response[:-1]:
-        if float(response[count + 1]['time']) - float(i['time']) == candle_time_frame:
-            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']),
-                             'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
-        else:
-            priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(i['ask']['c']),
-                             'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
-            priceLst.append(
-                {'upward movement': 0, 'downward movement': 0, 'price': float(response[count + 1]['ask']['o']),
-                 'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
-        count += 1
-    priceLst.append({'upward movement': 0, 'downward movement': 0, 'price': float(response[-1]['ask']['c']),
-                     'average upward movement': 0, 'average downward movement': 0, 'RSI': 0})
-    count = 0
-    for price in priceLst[1:]:
-        if price['price'] >= priceLst[count]['price']:
-            priceLst[count + 1]['upward movement'] += price['price'] - priceLst[count]['price']
-        else:
-            priceLst[count + 1]['downward movement'] += priceLst[count]['price'] - price['price']
-        count += 1
-    first_avg_upward, first_avg_downward = 0, 0
-    for i in priceLst[0:10]:
-        first_avg_upward += i['upward movement']
-        first_avg_downward += i['downward movement']
-    del priceLst[:10]
-    priceLst[0]['average upward movement'] = first_avg_upward / 10
-    priceLst[0]['average downward movement'] = first_avg_downward / 10
-    count = 0
-    for price in priceLst[1:]:
-        price['average upward movement'] = ((priceLst[count]['average upward movement'] * 9) + price[
-            'upward movement']) / 10
-        price['average downward movement'] = ((priceLst[count]['average downward movement'] * 9) + price[
-            'downward movement']) / 10
-        count += 1
-    return 100 - 100 / (1 + (priceLst[-1]['average upward movement'] / priceLst[-1]['average downward movement']))
-
 
 # INPUT: assetName(e.g.EUR_USD)
 # OUTPUT: {UNIX, averageAsk, averageBid, RSIValue}
