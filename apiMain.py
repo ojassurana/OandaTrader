@@ -6,7 +6,7 @@ from operator import itemgetter
 import requests
 global tradeIDs, base_url, assetName, dataSet
 
-# TODO: Variable initialization
+
 apiKey, accountID, base_url, assetName = getCredentials() # Initializes Oanda Login credentials from apiCredentials.txt file
 dataSet = [] # List of Dictionary [{UNIX, averageAsk, averageBid, RSIValue}]
 orders = {} # Dictionary containing orders with their respective execution time
@@ -14,14 +14,15 @@ get1HrData = []
 dataSet = [{'time': 0, 'avgBid': 0, 'avgAsk': 0, 'rsi': 0, 'colour': 'red'}, {'time': 0, 'avgBid': 0, 'avgAsk': 0, 'rsi': 0, 'colour': 'red'}]
 orderPlaced = {}
 
-# TODO: Tweak the following variables
-max_loss_percentage = 3
+
+max_loss_percentage = 3  # TODO: Program in the maximum loss percentage
 max_profit_percentage = 100  # Because we remove 9% max profit
 min_rsi_difference = 0
-minimum_candle_difference = 5
+minimum_candle_difference = 3  # TODO: Program in the minimum candle difference
 maximum_candle_difference = 18
 candle_time_frame = 3600  # Number of seconds per candle
-minimum_profit = 6  # Minimum profit required to execute
+minimum_profit = 6  # TODO: Program in the minimum profit percentage
+Rsi_level = 70  # TODO: 50, 60, 70, 80, 90
 
 print('Currency pair:', assetName)
 print('Starting... Will start at exact 1 Hour interval')
@@ -96,14 +97,14 @@ while True:
         stopLoss = (round_up(stopLoss, decimals=len(str(bidPrice).split('.')[1])))
         profit = ((bidPrice - takeProfit)/takeProfit)*2000  # Calculates percentage profit
         loss = ((stopLoss - bidPrice)/bidPrice)*2000  # Calculates percentage loss
-        if largest['rsi'] < 70 or largest2['rsi'] < 70:
-            reasons_why = reasons_why + 'RSI < 70' + '\n'
+        if largest['rsi'] < Rsi_level or largest2['rsi'] < Rsi_level:
+            reasons_why = reasons_why + 'RSI < Minimum RSI Level' + '\n'
         if profit < minimum_profit:
             reasons_why = reasons_why + 'Profit < 6%' + '\n'
         if loss > profit:
             reasons_why = reasons_why + 'loss > profit' + '\n'
         double = False
-        if profit >= minimum_profit and largest['rsi'] > 70 and largest2['rsi'] > 70:
+        if profit >= minimum_profit and largest['rsi'] > Rsi_level and largest2['rsi'] > Rsi_level and (float(largest['time'])-float(largest2['time']) >= minimum_candle_difference*3600):
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
             takeProfit, takeProfitTime = takeProfitCalculator(dataSet, largest2['time'])
