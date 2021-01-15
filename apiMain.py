@@ -15,14 +15,14 @@ dataSet = [{'time': 0, 'avgBid': 0, 'avgAsk': 0, 'rsi': 0, 'colour': 'red'}, {'t
 orderPlaced = {}
 
 
-max_loss_percentage = 3  # TODO: Program in the maximum loss percentage
+max_loss_percentage = 11  # TODO: Program in the maximum loss percentage
 max_profit_percentage = 100  # Because we remove 9% max profit
 min_rsi_difference = 0
 minimum_candle_difference = 3  # TODO: Program in the minimum candle difference
 maximum_candle_difference = 18
 candle_time_frame = 3600  # Number of seconds per candle
-minimum_profit = 6  # TODO: Program in the minimum profit percentage
-Rsi_level = 70  # TODO: 50, 60, 70, 80, 90
+minimum_profit = 2  # TODO: Program in the minimum profit percentage
+Rsi_level = 50  # TODO: 50, 60, 70, 80, 90
 secondlargesttime = []
 
 print('Currency pair:', assetName)
