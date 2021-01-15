@@ -107,7 +107,7 @@ while True:
         if largest2['time'] in secondlargesttime:
             reasons_why = reasons_why + 'largest RSI already executed' + '\n'
         double = False
-        if profit >= minimum_profit and largest['rsi'] > Rsi_level and largest2['rsi'] > Rsi_level and (float(largest['time'])-float(largest2['time']) >= minimum_candle_difference*3600) and (largest2['time'] not in secondlargesttime):
+        if profit >= minimum_profit and largest['rsi'] > Rsi_level and largest2['rsi'] > Rsi_level and (float(largest['time'])-float(largest2['time']) >= 28800) and (largest2['time'] not in secondlargesttime):
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
             takeProfit, takeProfitTime = takeProfitCalculator(dataSet, largest2['time'])
