@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$USER_HOME$/Desktop/OandaSimulator/.idea/OandaSimulator.iml" filepath="$USER_HOME$/Desktop/OandaSimulator/.idea/OandaSimulator.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/OandaTrader.iml" filepath="$PROJECT_DIR$/.idea/OandaTrader.iml" />
     </modules>
   </component>
