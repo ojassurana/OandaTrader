@@ -21,7 +21,7 @@ def getCredentials():  # Gets the authorization credentials
     global accountID
     global base_url
     global assetName
-    assetName = next(open('forex.txt'))
+    assetName = os.environ['pair']
     base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
     apiKey = os.environ['apiKey'].strip()
     accountID = os.environ['accountID'].strip()
