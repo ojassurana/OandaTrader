@@ -102,8 +102,8 @@ while True:
             reasons_why = reasons_why + 'RSI < Minimum RSI Level' + '\n'
         if profit < minimum_profit:
             reasons_why = reasons_why + 'Profit < Minimum Profit' + '\n'
-        if loss > profit:
-            reasons_why = reasons_why + 'loss > profit' + '\n'
+        # if loss > profit:
+        #     reasons_why = reasons_why + 'loss > profit' + '\n'
         if largest2['time'] in secondlargesttime:
             reasons_why = reasons_why + 'largest RSI already executed' + '\n'
         double = False
