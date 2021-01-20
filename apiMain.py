@@ -23,7 +23,7 @@ maximum_candle_difference = 18
 candle_time_frame = 3600  # Number of seconds per candle
 minimum_profit = 2  # TODO: Program in the minimum profit percentage
 Rsi_level = 50  # TODO: 50, 60, 70, 80, 90
-secondlargesttime = []
+secondlargestrsi = []
 
 print('Currency pair:', assetName)
 print('Starting... Will start at exact 1 Hour interval')
@@ -104,10 +104,10 @@ while True:
             reasons_why = reasons_why + 'Profit < Minimum Profit' + '\n'
         if float(largest['time'])-float(largest2['time']) < minimum_candle_difference*3600:
             reasons_why = reasons_why + 'Lesser than minimum candle difference' + '\n'
-        if largest2['time'] in secondlargesttime:
+        if largest2['rsi'] in secondlargestrsi:
             reasons_why = reasons_why + 'largest RSI already executed' + '\n'
         double = False
-        if profit >= minimum_profit and largest['rsi'] > Rsi_level and largest2['rsi'] > Rsi_level and (float(largest['time'])-float(largest2['time']) >= minimum_candle_difference*3600) and (largest2['time'] not in secondlargesttime):
+        if profit >= minimum_profit and largest['rsi'] > Rsi_level and largest2['rsi'] > Rsi_level and (float(largest['time'])-float(largest2['time']) >= minimum_candle_difference*3600) and (largest2['rsi'] not in secondlargestrsi):
             size = noUnits()  # Determines order size
             timeNow = float(largest['time'])  # The time of the largest
             takeProfit, takeProfitTime = takeProfitCalculator(dataSet, largest2['time'])
@@ -119,7 +119,7 @@ while True:
             orderPlaced[marketOrder(assetName, size, "sell", bidPrice, takeProfit, stopLoss)] = largest['time']
             orders[largest['time']] = ('sell', largest2['avgAsk'], takeProfit, largest['avgAsk'], [largest['time'], largest2['time']], [largest['rsi'], largest2['rsi']], [largest['avgAsk'], largest2['avgAsk']])
             double = True
-            secondlargesttime.append(largest2['time'])
+            secondlargestrsi.append(largest2['rsi'])
         if double == False:
             requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-492311350&text=' + message + '\n' + reasons_why)
     # Close after 20 candles
