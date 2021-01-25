@@ -22,9 +22,9 @@ def getCredentials():  # Gets the authorization credentials
     global base_url
     global assetName
     assetName = os.environ['pair']
-    base_url = 'https://api-fxpractice.oanda.com/v3/accounts/'
-    apiKey = os.environ['apiKey'].strip()
-    accountID = os.environ['accountID'].strip()
+    base_url = 'https://api-fxtrade.oanda.com/v3/accounts/'
+    apiKey = os.environ['apiKeyActual'].strip()
+    accountID = os.environ['accountIDActual'].strip()
     base_url = base_url + accountID
     return apiKey, accountID, base_url, assetName
 
@@ -95,7 +95,7 @@ def noUnits():
     response = makeRequest('GET', base_url, '', {'Content-Type': 'application/json', 'Authorization': apiKey}, '')
     percent5Acct = float(response['account']["balance"])  # /20
     initial_currency = assetName.split("_")[0] + "_SGD"
-    url = "https://api-fxpractice.oanda.com/v3/accounts/" + accountID + "/instruments/" + initial_currency + "/candles?price=A&granularity=H1&count=1"
+    url = "https://api-fxtrade.oanda.com/v3/accounts/" + accountID + "/instruments/" + initial_currency + "/candles?price=A&granularity=H1&count=1"
     payload = {}
     headers = {
         'Authorization': apiKey,
