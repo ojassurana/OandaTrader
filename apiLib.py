@@ -117,7 +117,7 @@ def takeProfitCalculator(dataSet, largest2Time):
     listData = []
     count = 0
     for data in dataSet:
-        if float(data['time']) == (float(largest2Time)+3600):
+        if float(data['time']) == (float(largest2Time)):
             listData = dataSet[count:]
             break
         count += 1
