@@ -135,7 +135,7 @@ def marketOrder(assetName, units, order, price, takeProfit, stopLoss):
     body = '{"order": {"stopLossOnFill": {"price": "' + str(
         round(stopLoss, 5)) + '"},"takeProfitOnFill": {"price": "' + str(
         round(takeProfit, 5)) + '"},"timeInForce": "GTD","instrument": "' + assetName + '","units": "' + str(int(
-        units * (20/11))) + '","type": "MARKET_IF_TOUCHED","positionFill": "DEFAULT","price": "' + str(
+        units * (20/22))) + '","type": "MARKET_IF_TOUCHED","positionFill": "DEFAULT","price": "' + str(
         price) + '","gtdTime": "' + str(int(time.time() + timetowait)) + '"}}'
     response = makeRequest('POST', base_url + '/orders', '',
                            {'Authorization': apiKey, 'Accept-Datetime-Format': 'UNIX'}, body)
