@@ -19,7 +19,7 @@ max_loss_percentage = 11  # TODO: Program in the maximum loss percentage
 max_profit_percentage = 100  # Because we remove 9% max profit
 min_rsi_difference = 0
 minimum_candle_difference = 5  # TODO: Program in the minimum candle difference
-maximum_candle_difference = 50
+maximum_candle_difference = 18
 candle_time_frame = 3600  # Number of seconds per candle
 minimum_profit = 2  # TODO: Program in the minimum profit percentage
 Rsi_level = 50  # TODO: 50, 60, 70, 80, 90
@@ -114,7 +114,7 @@ while True:
             if ((bidPrice - takeProfit)/bidPrice)*2000 > max_profit_percentage:  # Maximising take profit to be 9%
                 takeProfit = bidPrice-((max_profit_percentage/2000)*bidPrice)
                 takeProfit = (round_up(takeProfit, decimals=len(str(priceRn).split('.')[1])))
-            message = 'Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(stopLoss) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']]) + '\n' + assetName
+            message = 'Sell Time:' + str(timeNow) + '\n' + 'Take profit: ' + str(takeProfit) + '\n' + 'Stop Loss: ' + str(stopLoss) + '\n' + str([largest['time'], largest2['time']]) + str([largest['rsi'], largest2['rsi']]) + '\n' + assetName
             requests.request('GET', 'https://api.telegram.org/bot1285074044:AAGhVLID-dipo5G13zW4iw2Yz2XKnqL-TjE/sendMessage?chat_id=-486754139&text=' + message)
             orderPlaced[marketOrder(assetName, size, "sell", bidPrice, takeProfit, stopLoss)] = largest['time']
             orders[largest['time']] = ('sell', largest2['avgAsk'], takeProfit, largest['avgAsk'], [largest['time'], largest2['time']], [largest['rsi'], largest2['rsi']], [largest['avgAsk'], largest2['avgAsk']])
